@@ -1,50 +1,138 @@
-# Welcome to your Expo app 👋
+# Firebase Auth (Email/Password) — Expo + React Native
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
-## Get started
+https://github.com/user-attachments/assets/8cea1f8c-7653-4a5a-bae8-e66388823dc8
 
-1. Install dependencies
 
-   ```bash
-   npm install
-   ```
+A minimal Expo Router app using **Firebase Authentication** via **@react-native-firebase/auth**.
 
-2. Start the app
+## What this project does
 
-   ```bash
-   npx expo start
-   ```
+- **Register** with **Email/Password**
+- **Login** with **Email/Password**
+- After login, users land on a simple protected screen
+- **Sign out** (calls `auth().signOut()`)
+- Root layout listens to Firebase auth state (`auth().onAuthStateChanged`) and redirects users accordingly
 
-In the output, you'll find options to open the app in a
+## Tech stack
 
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
+- Expo (SDK ~54)
+- React Native
+- Expo Router
+- `@react-native-firebase/app` + `@react-native-firebase/auth`
 
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
+---
 
-## Get a fresh project
+## Prerequisites
 
-When you're ready, run:
+- Node.js (LTS)
+- npm
+- For native builds:
+  - Android Studio / Emulator (Android)
+  - Xcode (iOS)
+- A Firebase project
+
+---
+
+## 1) Install dependencies
 
 ```bash
-npm run reset-project
+npm install
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+---
 
-## Learn more
+## 2) Configure Firebase (important)
 
-To learn more about developing your project with Expo, look at the following resources:
+This app expects the Firebase config files to exist in the project root:
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+- `google-services.json` (Android)
+- `GoogleService-Info.plist` (iOS)
 
-## Join the community
+### iOS: bundle identifier + config file
 
-Join our community of developers creating universal apps.
+1. Edit `app.json`:
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```json
+"ios": {
+  "bundleIdentifier": "com.yourcompany.firebaseapp",
+  "googleServicesFile": "./GoogleService-Info.plist"
+}
+```
+
+2. In **Firebase Console**:
+   - Go to **Project settings** → **Your apps**
+   - Add/select an **iOS app**
+   - Use the **same bundle id** as in `app.json`
+   - Download `GoogleService-Info.plist`
+   - Place it in the project root (same folder as `package.json`)
+
+### Android: package name + config file
+
+1. Edit `app.json`:
+
+```json
+"android": {
+  "package": "com.yourcompany.firebaseapp",
+  "googleServicesFile": "./google-services.json"
+}
+```
+
+2. In **Firebase Console**:
+   - Go to **Project settings** → **Your apps**
+   - Add/select an **Android app**
+   - Use the **same package name** as in `app.json`
+   - Download `google-services.json`
+   - Place it in the project root
+
+---
+
+## 3) Enable Authentication providers
+
+1. Firebase Console → **Authentication**
+2. Click **Get started**
+3. Enable **Email/Password**
+4. Add **Google** provider
+   - Make sure Google is configured with the **iOS + Android config** above
+   - The required **reverse client id** is included when you download the updated iOS config from Firebase
+
+---
+
+## 4) Run the app
+
+### Development (quickest)
+
+```bash
+npx expo start
+```
+
+### Android
+
+```bash
+npm run android
+```
+
+### iOS
+
+```bash
+npm run ios
+```
+
+---
+
+## Notes / troubleshooting
+
+- If login fails on device but works in code:
+  - Confirm the correct Firebase config files were copied into the project root
+  - Confirm bundle/package identifiers match exactly
+- If Google sign-in gives an error:
+  - Re-download iOS/Android config from Firebase after registering both apps
+
+---
+
+## Project structure (high level)
+
+- `app/index.tsx` → Login/Register UI
+- `app/(auth)/home.tsx` → Protected home + Sign out button
+- `app/_layout.tsx` → Auth listener and routing
+
