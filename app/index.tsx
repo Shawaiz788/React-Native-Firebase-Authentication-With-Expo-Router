@@ -2,13 +2,14 @@ import React, { useState } from 'react';
 import { ActivityIndicator, Button, KeyboardAvoidingView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 import auth from '@react-native-firebase/auth';
+import { useRouter } from 'expo-router';
 import { FirebaseError } from 'firebase/app';
 const index = () => {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
-
+  const router = useRouter();
 
   const signUp = async ()=>{
       setLoading(true);
@@ -25,10 +26,19 @@ const index = () => {
       
   }
 
-  const signIn=()=>{
+  const signIn = async () => {
+  setLoading(true);
 
-
+  try {
+    await auth().signInWithEmailAndPassword(email, password);
+    router.replace('/(auth)/home');
+  } catch (e: any) {
+    const err = e as FirebaseError;
+    alert('Login Failed: ' + err.message);
+  } finally {
+    setLoading(false);
   }
+};
   return (
     <View style={styles.container}>
   <KeyboardAvoidingView behavior="padding">
