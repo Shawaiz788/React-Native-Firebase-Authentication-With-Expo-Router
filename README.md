@@ -1,4 +1,4 @@
-# Firebase Auth (Email/Password) — Expo + React Native
+# Firebase Auth (Email/Password) - Expo + React Native
 
 
 https://github.com/user-attachments/assets/8cea1f8c-7653-4a5a-bae8-e66388823dc8
